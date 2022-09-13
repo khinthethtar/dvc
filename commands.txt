@@ -40,3 +40,72 @@ dvc run --force -n training -p training.num_rows -d training.py -d weather-data/
 dvc repro
 
 ###################################################################################################################################################
+
+mkdir data
+
+dvc get https://github.com/iterative/dataset-registry get-started/data.xml -o data/data.xml
+
+dvc init
+
+dvc add data/data.xml
+
+dvc config core.autostage true
+
+git add 'data\data.xml.dvc' 'data\.gitignore'
+
+git commit -m "Add raw data"
+
+#Setting 'storage' as a default remote
+dvc remote add -d storage gdrive://1SsCDkDRm5H9HZEjuEcimFh9QdjJ9kpcy
+
+git commit ".dvc/config" -m "Configure remote storage"
+
+dvc push
+
+cat data/.gitignore
+
+rm -f data/data.xml
+rm -rf .dvc/cache
+
+dvc pull
+
+cp data/data.xml /tmp/data.xml
+
+cat /tmp/data.xml >> data/data.xml
+
+ls -lh data
+
+dvc add data/data.xml
+
+git add data/data.xml.dvc
+
+git commit -m "Dataset updates"
+
+dvc push
+
+git log --oneline
+
+git checkout HEAD^1 data/data.xml.dvc
+
+dvc checkout
+
+git commit data/data.xml.dvc -m "Revert dataset updates"
+
+git log --oneline
+
+git checkout 731f3c5 data/data.xml.dvc
+
+dvc checkout
+
+git commit data/data.xml.dvc -m "Dataset updates"
+
+#Change somethin in data.xml
+ls -lh data
+
+dvc add data/data.xml
+
+git add data/data.xml.dvc
+
+git commit -m "Dataset updates"
+
+dvc push
