@@ -1,23 +1,42 @@
+pip install dvc
+pip install --upgrade pywin32==225
+
+git init
+
 dvc init
 
 dvc add weather-data/2006-04-10.csv
 
+dvc config core.autostage true
 
-dvc run --force \
--n filter \
--d filter.py -d weather-data/2006-04-10.csv \
--p filter.value \
--o output/filter \
-python3 filter.py
+dvc run --force -n filter -d filter.py -d weather-data/2006-04-10.csv -p filter.value -o output/filter python3 filter.py
 
-dvc run --force \
--n training \
--p training.num_rows \
--d training.py -d output/filter -d weather-data/2006-04-10.csv \
--o output/training \
-python3 training.py output/filter
+dvc repro
 
+#change filter parameter value to 20
 
+dvc run --force -n filter -d filter.py -d weather-data/2006-04-10.csv -p filter.value -o output/filter python3 filter.py
 
+dvc repro
+
+dvc run --force -n training -p training.num_rows -d training.py -d output/filter -o output/training python training.py output/filter
 
 dvc dag
+
+dvc repro
+
+#change filter parameter num_rows to 5
+
+dvc repro
+
+#change a value in csv file 
+
+dvc repro
+
+dvc run --force -n training -p training.num_rows -d training.py -d weather-data/2006-04-10.csv -d output/filter -o output/training python training.py output/filter
+
+#change a value in csv file 
+
+dvc repro
+
+###################################################################################################################################################
